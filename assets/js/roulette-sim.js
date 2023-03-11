@@ -143,10 +143,12 @@ function isBlack(spot) {
 
 function onSpotHover(element) {
     //console.log('Hover over [' + element.id + ']');
+    $('#betInfoDiv').removeClass('bet-info-hidden');
     updateBetInfoUI(element.id);
 }
 
 function onSpotHoverEnd(element) {
+    $('#betInfoDiv').addClass('bet-info-hidden');
     clearBetInfoUI();
 }
 
@@ -161,8 +163,8 @@ function updateBetInfoUI(elementId) {
 
     var currentBet = wagers[elementId];
     if (currentBet) {
-        $('#betInfoBetCurrentBetDiv').text('Bet: ' + currentBet);
-        $('#betInfoBetWinningPayDiv').text('Payout: ' + bet.payout * currentBet);
+        $('#betInfoBetCurrentBetDiv').text('Bet: ' + (currentBet).toLocaleString());
+        $('#betInfoBetWinningPayDiv').text('Payout: ' + (bet.payout * currentBet).toLocaleString());
     }
 
     bet.numbersCovered.forEach(spot => {
@@ -183,7 +185,7 @@ function updateTotalAmounts() {
     }
     
     if (totalBetAmount > 0) {
-        $('#totalBetAmountDiv').text(totalBetAmount);
+        $('#totalBetAmountDiv').text(totalBetAmount.toLocaleString());
         $('#evDiv').text((-totalBetAmount / 37.0).toLocaleString());
         $('#compsDiv').text((totalBetAmount / 185.0 ).toLocaleString());
     }
@@ -240,7 +242,7 @@ function updateEquityPerSpot() {
         if (!equityPerSpot[spot]) {
             if (totalBetAmount > 0)  {
                 $('#win-' + spot + ' div').addClass('amt-neg');
-                $('#win-' + spot + ' div').text(-totalBetAmount);
+                $('#win-' + spot + ' div').text((-totalBetAmount).toLocaleString());
             }
             else {
                 $('#win-' + spot + ' div').addClass('amt-0');
@@ -261,12 +263,14 @@ function updateEquityPerSpot() {
                 //console.log('SETTING WIN SPOT TO AMT-0 CLASS ' + spot);
                 $('#win-' + spot + ' div').addClass('amt-0');
             }
-            $('#win-' + spot + ' div').text(winLossAmount);
+            $('#win-' + spot + ' div').text(winLossAmount.toLocaleString());
         }
     });
 }
 
 function clearBetInfoUI() {
+    //$('#betInfoDiv').addClass('bet-info-hidden');
+
     $('#betInfoBetHeaderDiv').empty();
     $('#betInfoBetPaysDiv').empty();
     $('#betInfoBetCurrentBetDiv').empty();

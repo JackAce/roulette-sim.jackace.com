@@ -39,10 +39,9 @@ body {
     position: absolute;
     z-index: 30;
     left: 810px;
-    top: 60px;
+    top: 65px;
     width: 150px;
     height: 200px;
-    background-color: #8946bb;
 }
 
 #betInfoBetHeaderDiv {
@@ -129,6 +128,9 @@ body {
     left: 730px;
 }
 
+.bet-info-hidden {
+    display: none;
+}
 .chip-position-0 {
     left: 5px;
     top: 300px;
@@ -206,6 +208,7 @@ body {
     z-index: 20;
     width: 30px;
     height: 30px;
+    overflow: hidden;
 }
 .chip-bet {
     position: absolute;
@@ -288,6 +291,7 @@ body {
     width: 52px;
     height: 30px;
     border: 1px #fff solid;
+    overflow: hidden;
 }
 .equity div {
     margin: 7px 5px 2px 2px;
@@ -300,6 +304,7 @@ body {
     width: 52px;
     height: 30px;
     border: 1px #fff solid;
+    overflow: hidden;
 }
 .win div {
     margin: 7px 5px 2px 2px;
