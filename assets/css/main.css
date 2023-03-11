@@ -127,9 +127,20 @@ body {
     top: 335px;
     left: 730px;
 }
+#jackaceLabelDiv {
+    position: absolute;
+    z-index: 999;
+    top: 535px;
+    left: 730px;
+}
 
 .bet-info-hidden {
     display: none;
+}
+.disclaimer {
+    color: #ccc;
+    font-size: 12px;
+    font-style: italic;
 }
 .chip-position-0 {
     left: 5px;
@@ -307,7 +318,7 @@ body {
     overflow: hidden;
 }
 .win div {
-    margin: 7px 5px 2px 2px;
+    padding: 7px 1px 1px 1px;
     font-weight: bold;
     text-align: right;
     font-size: 14px;
