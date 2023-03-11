@@ -1,46 +1,7 @@
-//let currentSelectedChip = 5;
 let currentSelectedChipIndex = 1;   // Default to the $5 chip
 let wagers = {};
-// The last entry if for "00"
 let equityPerSpot = {};
-
-/*
-let rouletteSystem = {
-    buyIn: 1000,
-    walkThreshold: 1000,
-
-    tiers: {
-        "tier0": {
-            waitFor: {
-
-            },
-            wagers: {
-                "x1-21": 10,
-                "x12-doz1": 10
-            },
-            onLoss: {
-                threshold: 1,
-                nextTier: ""
-            },
-            onWin: null
-        },
-        "tier1": {
-            waitFor: {
-
-            },
-            wagers: {
-                "x1-21": 10,
-                "x12-doz1": 10
-            },
-            onLoss: {
-                threshold: 1,
-                nextTier: ""
-            },
-            onWin: null
-        }
-    }
-};
-*/
+let chipBuffer = [];
 
 function addHotSpot(identifier, isGreen, left, top, className) {
     let newDiv = document.createElement('div');
@@ -64,15 +25,16 @@ function addBettingChip(elementId, chipIndex) {
     let newDiv = document.createElement('div');
     let newImg = document.createElement('img');
     let newTextDiv = document.createElement('div');
+    let elementSelector = '#' + elementId;
 
     newDiv.id = 'chip-' + elementId;
     newDiv.classList.add('chip');
     newDiv.classList.add('chip-bet');
 
-    let divWidth = $('#' + elementId).width();
-    let divHeight = $('#' + elementId).height();
-    let divLeft = $('#' + elementId).position().left;
-    let divTop = $('#' + elementId).position().top;
+    let divWidth = $(elementSelector).width();
+    let divHeight = $(elementSelector).height();
+    let divLeft = $(elementSelector).position().left;
+    let divTop = $(elementSelector).position().top;
 
     newDiv.style.left = divLeft + (divWidth / 2) - (CHIP_WIDTH / 2);
     newDiv.style.top = divTop + (divHeight / 2) - (CHIP_HEIGHT / 2);
@@ -94,8 +56,8 @@ function addEquitySpot(spot, left, top) {
     let innerDiv = document.createElement('div');
     let identifier = 'equity-' + spot;
 
-    let spotIsRed = isRed(spot + '');
-    let spotIsBlack = isBlack(spot + '');
+    let spotIsRed = isRed(spot);
+    let spotIsBlack = isBlack(spot);
 
     newDiv.id = identifier;
     newDiv.classList.add('equity');
@@ -170,10 +132,12 @@ function isGreen(spot) {
 }
 
 function isRed(spot) {
+    spot = spot.toString();
     return ROULETTE_NUMBERS_RED.includes(spot);
 }
 
 function isBlack(spot) {
+    spot = spot.toString();
     return ROULETTE_NUMBERS_BLACK.includes(spot);
 }
 
@@ -187,19 +151,27 @@ function onSpotHoverEnd(element) {
 }
 
 function updateBetInfoUI(elementId) {
+    if (!elementId) {
+        return;
+    }
+
     let bet = getBetInfo(elementId);
     $('#betInfoBetHeaderDiv').text(bet.canonicalName);
-    $('#betInfoBetPaysDiv').text(bet.payout + 'x');
+    $('#betInfoBetPaysDiv').text('Pays: ' + bet.payout + ':1');
 
     var currentBet = wagers[elementId];
     if (currentBet) {
-        $('#betInfoBetCurrentBetDiv').text(currentBet);
-        $('#betInfoBetWinningPayDiv').text(bet.payout * currentBet);
+        $('#betInfoBetCurrentBetDiv').text('Bet: ' + currentBet);
+        $('#betInfoBetWinningPayDiv').text('Payout: ' + bet.payout * currentBet);
     }
 
     bet.numbersCovered.forEach(spot => {
         //console.log('highlighting ' + spot);
         $('#highlight-' + spot).removeClass('highlight-hidden');
+
+        if (spot === '0') {
+            $('#cap-0-0').removeClass('highlight-hidden');
+        }
     });
 
 }
@@ -210,9 +182,16 @@ function updateTotalAmounts() {
         totalBetAmount += wagers[key];
     }
     
-    $('#totalBetAmountDiv').text(totalBetAmount);
-    $('#evDiv').text((-totalBetAmount / 37.0).toLocaleString());
-    $('#compsDiv').text((totalBetAmount / 185.0 ).toLocaleString());
+    if (totalBetAmount > 0) {
+        $('#totalBetAmountDiv').text(totalBetAmount);
+        $('#evDiv').text((-totalBetAmount / 37.0).toLocaleString());
+        $('#compsDiv').text((totalBetAmount / 185.0 ).toLocaleString());
+    }
+    else {
+        $('#totalBetAmountDiv').text('0');
+        $('#evDiv').text('0');
+        $('#compsDiv').text('0.00');
+    }
 }
 
 function resetEquityPerSpot() {
@@ -242,6 +221,8 @@ function updateEquityPerSpot() {
             }
             equityPerSpot[currentNumber] += currentWager / currentNumbersCovered;
         }
+
+        $('#chip-' + spot + ' div').text(wagers[spot]);
     }
 
     for (const spot in equityPerSpot) {
@@ -257,18 +238,27 @@ function updateEquityPerSpot() {
 
     ROULETTE_NUMBERS.forEach(spot => {
         if (!equityPerSpot[spot]) {
-            $('#win-' + spot + ' div').addClass('amt-neg');
-            $('#win-' + spot + ' div').text(-totalBetAmount);
+            if (totalBetAmount > 0)  {
+                $('#win-' + spot + ' div').addClass('amt-neg');
+                $('#win-' + spot + ' div').text(-totalBetAmount);
+            }
+            else {
+                $('#win-' + spot + ' div').addClass('amt-0');
+                $('#win-' + spot + ' div').text('');
+            }
         }
         else {
             let winLossAmount = (equityPerSpot[spot] * 36) - totalBetAmount;
             if (winLossAmount > 0) {
+                //console.log('SETTING WIN SPOT TO AMT-POS CLASS ' + spot + ' wl ' + winLossAmount);
                 $('#win-' + spot + ' div').addClass('amt-pos');
             }
             else if (winLossAmount < 0) {
+                //console.log('SETTING WIN SPOT TO AMT-NEG CLASS ' + spot + ' wl ' + winLossAmount);
                 $('#win-' + spot + ' div').addClass('amt-neg');
             }
             else {
+                //console.log('SETTING WIN SPOT TO AMT-0 CLASS ' + spot);
                 $('#win-' + spot + ' div').addClass('amt-0');
             }
             $('#win-' + spot + ' div').text(winLossAmount);
@@ -281,6 +271,9 @@ function clearBetInfoUI() {
     $('#betInfoBetPaysDiv').empty();
     $('#betInfoBetCurrentBetDiv').empty();
     $('#betInfoBetWinningPayDiv').empty();
+
+    $('#cap-0-0').removeClass('highlight-hidden');
+    $('#cap-0-0').addClass('highlight-hidden');
 
     ROULETTE_NUMBERS.forEach(spot => {
         $('#highlight-' + spot).removeClass('highlight-hidden');
@@ -299,23 +292,83 @@ function setCurrentChip(chipIndex) {
 
 function clearBets() {
     wagers = {};
+    chipBuffer = [];
     $('.chip-bet').remove();
 
-    resetEquityPerSpot();
+    updateEquityPerSpot();
+    updateTotalAmounts();
+    updateConfiguration();
+}
+
+function undoLastBet() {
+    if (chipBuffer.length === 0) {
+        // Nothing to do
+        return;
+    }
+
+    let lastBet = chipBuffer.pop();
+    let currentAmount = wagers[lastBet.wagerKey];
+
+    if (lastBet.amount === currentAmount) {
+        // Remove chip from DOM
+        $('#chip-' + lastBet.wagerKey).remove();
+        delete wagers[lastBet.wagerKey];
+    }
+    else {
+        wagers[lastBet.wagerKey] -= lastBet.amount;
+    }
+
+    updateEquityPerSpot();
+    updateTotalAmounts();
+    updateConfiguration();
+}
+
+function martingaleBet() {
+    for (const key in wagers) {
+        wagers[key] *= 2;
+    }
+    chipBuffer = [];
+
+    updateEquityPerSpot();
+    updateTotalAmounts();
+    updateConfiguration();
+}
+
+function halveBet() {
+    for (const key in wagers) {
+        wagers[key] = parseInt(wagers[key] / 2);
+        if (wagers[key] < 1) {
+            wagers[key] = 1;
+        }
+    }
+    chipBuffer = [];
+
     updateEquityPerSpot();
     updateTotalAmounts();
     updateConfiguration();
 }
 
 function onSpotClick(element) {
+    // TODO: DON'T ALLOW BETS OVER $5000
+
     if (wagers[element.id]) {
+        // Update existing chip
         wagers[element.id] += CHIP_AMOUNTS[currentSelectedChipIndex];
         $('#chip-' + element.id + ' div').text(wagers[element.id]);
     }
     else {
+        // Add chip to DOM
         addBettingChip(element.id, currentSelectedChipIndex);
         wagers[element.id] = CHIP_AMOUNTS[currentSelectedChipIndex];
     }
+
+    // Add to chipBuffer;
+    chipBuffer.push({
+        wagerKey: element.id,
+        amount: CHIP_AMOUNTS[currentSelectedChipIndex]
+    });
+
+    //console.log(chipBuffer);
 
     setChipImage(element.id);
     updateBetInfoUI(element.id);
@@ -628,12 +681,13 @@ function createSpotHighlightDivs() {
     }
 }
 
-$(document).ready(function() {
-    //console.log('CREATING HOTSPOTS');
+function createUiElements() {
     createHotspots();
     createEquityPerSpotDivs();
     createWinLossSpotDivs();
     createSpotHighlightDivs();
-    //console.log(isRed('1'));
-    //console.log('READY FOR ACTION');
+}
+
+$(document).ready(function() {
+    createUiElements();
 });
