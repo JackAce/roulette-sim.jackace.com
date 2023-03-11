@@ -28,13 +28,38 @@ title: Roulette Simulator - JackAce.com
 
         <div id="rouletteLayoutDiv">
           <img src="/assets/img/roulette/roulette-layout-dark-800x450.png" width="800" height="450" />
+
+          <div id="totalBetAmountHeaderDiv" class="totalAmountHeader">Total Amt Bet</div>
+          <div id="evHeaderDiv" class="totalAmountHeader">EV/Spin</div>
+          <div id="compsHeaderDiv" class="totalAmountHeader">Comp Val/Spin</div>
+          <div id="totalBetAmountDiv" class="totalAmount">&nbsp;</div>
+          <div id="evDiv" class="totalAmount">&nbsp;</div>
+          <div id="compsDiv" class="totalAmount">&nbsp;</div>
+
+          <div id="clearButton" class="button"><img src="/assets/img/buttons/btn-clear-80x30.png" width="80" height="30" onclick="clearBets();" /></div>
+
           <br/>
-          <img src="/assets/img/chips/chip_1-50x50.png" width="50" height="50" class="chip chip-1 chip-inactive" onclick="setCurrentChip(1);" />
-          <img src="/assets/img/chips/chip_5-50x50.png" width="50" height="50" class="chip chip-5 chip-inactive" onclick="setCurrentChip(5);" />
-          <img src="/assets/img/chips/chip_25-50x50.png" width="50" height="50" class="chip chip-25 chip-inactive" onclick="setCurrentChip(25);" />
-          <img src="/assets/img/chips/chip_100-50x50.png" width="50" height="50" class="chip chip-100" onclick="setCurrentChip(100);" />
-          <img src="/assets/img/chips/chip_500-50x50.png" width="50" height="50" class="chip chip-500 chip-inactive" onclick="setCurrentChip(500);" />
-          <img src="/assets/img/chips/chip_1000-50x50.png" width="50" height="50" class="chip chip-1000 chip-inactive" onclick="setCurrentChip(1000);" />
+          <img src="/assets/img/chips/chip_1-50x50.png" width="50" height="50" id="chip-selectable-1" class="chip chip-selectable chip-position-0 chip-1 chip-inactive" />
+          <img src="/assets/img/chips/chip_5-50x50.png" width="50" height="50" id="chip-selectable-5" class="chip chip-selectable chip-position-1 chip-5 chip-inactive" />
+          <img src="/assets/img/chips/chip_25-50x50.png" width="50" height="50" id="chip-selectable-25" class="chip chip-selectable chip-position-2 chip-25 chip-inactive" />
+          <img src="/assets/img/chips/chip_100-50x50.png" width="50" height="50" id="chip-selectable-100" class="chip chip-selectable chip-position-3 chip-100" />
+          <img src="/assets/img/chips/chip_500-50x50.png" width="50" height="50" id="chip-selectable-500" class="chip chip-selectable chip-position-4 chip-500 chip-inactive" />
+          <img src="/assets/img/chips/chip_1000-50x50.png" width="50" height="50" id="chip-selectable-1000" class="chip chip-selectable chip-position-5 chip-1000 chip-inactive" />
+
+          <img src="/assets/img/chips/chip_cover-50x50.png" width="50" height="50" id="chip-cover-0" class="chip chip-cover chip-position-0" onclick="setCurrentChip(0);" />
+          <img src="/assets/img/chips/chip_cover-50x50.png" width="50" height="50" id="chip-cover-1" class="chip chip-cover chip-position-1 chip-cover-hidden" onclick="setCurrentChip(1);" />
+          <img src="/assets/img/chips/chip_cover-50x50.png" width="50" height="50" id="chip-cover-2" class="chip chip-cover chip-position-2" onclick="setCurrentChip(2);" />
+          <img src="/assets/img/chips/chip_cover-50x50.png" width="50" height="50" id="chip-cover-3" class="chip chip-cover chip-position-3" onclick="setCurrentChip(3);" />
+          <img src="/assets/img/chips/chip_cover-50x50.png" width="50" height="50" id="chip-cover-4" class="chip chip-cover chip-position-4" onclick="setCurrentChip(4);" />
+          <img src="/assets/img/chips/chip_cover-50x50.png" width="50" height="50" id="chip-cover-5" class="chip chip-cover chip-position-5" onclick="setCurrentChip(5);" />
+        </div>
+
+
+        <div id="betInfoDiv">
+          <div id="betInfoBetHeaderDiv">&nbsp;</div>
+          <div id="betInfoBetPaysDiv"></div>
+          <div id="betInfoBetCurrentBetDiv"></div>
+          <div id="betInfoBetWinningPayDiv"></div>
         </div>
 
         <div id="configurationDiv">

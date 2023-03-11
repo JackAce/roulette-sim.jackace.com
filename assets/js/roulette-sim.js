@@ -1,8 +1,46 @@
-let currentSelectedChip = 5;
-//let wagers = [];
+//let currentSelectedChip = 5;
+let currentSelectedChipIndex = 1;   // Default to the $5 chip
 let wagers = {};
+// The last entry if for "00"
+let equityPerSpot = {};
+
+/*
 let rouletteSystem = {
+    buyIn: 1000,
+    walkThreshold: 1000,
+
+    tiers: {
+        "tier0": {
+            waitFor: {
+
+            },
+            wagers: {
+                "x1-21": 10,
+                "x12-doz1": 10
+            },
+            onLoss: {
+                threshold: 1,
+                nextTier: ""
+            },
+            onWin: null
+        },
+        "tier1": {
+            waitFor: {
+
+            },
+            wagers: {
+                "x1-21": 10,
+                "x12-doz1": 10
+            },
+            onLoss: {
+                threshold: 1,
+                nextTier: ""
+            },
+            onWin: null
+        }
+    }
 };
+*/
 
 function addHotSpot(identifier, isGreen, left, top, className) {
     let newDiv = document.createElement('div');
@@ -21,6 +59,112 @@ function addHotSpot(identifier, isGreen, left, top, className) {
     $('#mainDiv').append(newDiv);
 }
 
+function addBettingChip(elementId, chipIndex) {
+    // TODO: Move this to a separate function
+    let newDiv = document.createElement('div');
+    let newImg = document.createElement('img');
+    let newTextDiv = document.createElement('div');
+
+    newDiv.id = 'chip-' + elementId;
+    newDiv.classList.add('chip');
+    newDiv.classList.add('chip-bet');
+
+    let divWidth = $('#' + elementId).width();
+    let divHeight = $('#' + elementId).height();
+    let divLeft = $('#' + elementId).position().left;
+    let divTop = $('#' + elementId).position().top;
+
+    newDiv.style.left = divLeft + (divWidth / 2) - (CHIP_WIDTH / 2);
+    newDiv.style.top = divTop + (divHeight / 2) - (CHIP_HEIGHT / 2);
+
+    newImg.id = 'chip-img-' + elementId;
+    newImg.width = CHIP_WIDTH;
+    newImg.height = CHIP_HEIGHT;
+
+    newTextDiv.classList.add('chip-text');
+    newTextDiv.innerHTML = CHIP_AMOUNTS[chipIndex];
+
+    $('#mainDiv').append(newDiv);
+    $('#' + newDiv.id ).append(newImg);
+    $('#' + newDiv.id ).append(newTextDiv);
+}
+
+function addEquitySpot(spot, left, top) {
+    let newDiv = document.createElement('div');
+    let innerDiv = document.createElement('div');
+    let identifier = 'equity-' + spot;
+
+    let spotIsRed = isRed(spot + '');
+    let spotIsBlack = isBlack(spot + '');
+
+    newDiv.id = identifier;
+    newDiv.classList.add('equity');
+    
+    if (spotIsRed) {
+        newDiv.classList.add('spot-red');
+    }
+    else if (spotIsBlack) {
+        newDiv.classList.add('spot-black');
+    }
+    else {
+        newDiv.classList.add('spot-green');
+    }
+
+    newDiv.style.left = left + 'px';
+    newDiv.style.top = top + 'px';
+
+    $('#mainDiv').append(newDiv);
+    $('#equity-' + spot).append(innerDiv);
+}
+
+function addWinLossSpot(spot, left, top) {
+    let newDiv = document.createElement('div');
+    let innerDiv = document.createElement('div');
+    let identifier = 'win-' + spot;
+
+    let spotIsRed = isRed(spot + '');
+    let spotIsBlack = isBlack(spot + '');
+
+    newDiv.id = identifier;
+    newDiv.classList.add('win');
+    
+    if (spotIsRed) {
+        newDiv.classList.add('spot-red');
+    }
+    else if (spotIsBlack) {
+        newDiv.classList.add('spot-black');
+    }
+    else {
+        newDiv.classList.add('spot-green');
+    }
+
+    newDiv.style.left = left + 'px';
+    newDiv.style.top = top + 'px';
+
+    $('#mainDiv').append(newDiv);
+    $('#win-' + spot).append(innerDiv);
+
+    //innerDiv
+}
+
+function addSpotHighlight(spot, left, top) {
+    let newDiv = document.createElement('div');
+    let identifier = 'highlight-' + spot;
+
+    newDiv.id = identifier;
+    newDiv.classList.add('highlight');
+    newDiv.classList.add('highlight-hidden');
+    
+    if (spot === '0') {
+        newDiv.classList.add('highlight-0-0');
+    }
+
+    newDiv.style.left = left + 'px';
+    newDiv.style.top = top + 'px';
+
+    $('#mainDiv').append(newDiv);
+}
+
 function isGreen(spot) {
     return ROULETTE_NUMBERS_GREEN.includes(spot);
 }
@@ -35,63 +179,157 @@ function isBlack(spot) {
 
 function onSpotHover(element) {
     //console.log('Hover over [' + element.id + ']');
+    updateBetInfoUI(element.id);
 }
 
 function onSpotHoverEnd(element) {
-    //console.log('Hover OUT [' + element.id + ']');
+    clearBetInfoUI();
 }
 
-function setCurrentChip(chipAmount) {
-    currentSelectedChip = chipAmount;
-    // TODO: make the other chip images look disabled
-    //console.log('Current Chip set to ' + chipAmount);
+function updateBetInfoUI(elementId) {
+    let bet = getBetInfo(elementId);
+    $('#betInfoBetHeaderDiv').text(bet.canonicalName);
+    $('#betInfoBetPaysDiv').text(bet.payout + 'x');
+
+    var currentBet = wagers[elementId];
+    if (currentBet) {
+        $('#betInfoBetCurrentBetDiv').text(currentBet);
+        $('#betInfoBetWinningPayDiv').text(bet.payout * currentBet);
+    }
+
+    bet.numbersCovered.forEach(spot => {
+        //console.log('highlighting ' + spot);
+        $('#highlight-' + spot).removeClass('highlight-hidden');
+    });
+
+}
+
+function updateTotalAmounts() {
+    let totalBetAmount = 0;
+    for (const key in wagers) {
+        totalBetAmount += wagers[key];
+    }
+    
+    $('#totalBetAmountDiv').text(totalBetAmount);
+    $('#evDiv').text((-totalBetAmount / 37.0).toLocaleString());
+    $('#compsDiv').text((totalBetAmount / 185.0 ).toLocaleString());
+}
+
+function resetEquityPerSpot() {
+    equityPerSpot = {};
+    $('.equity div').text('');
+}
+
+function updateEquityPerSpot() {
+    let betInfo;
+    let currentWager;
+    let currentNumbersCovered;
+    let currentNumber;
+
+    resetEquityPerSpot();
+
+    for (const spot in wagers) {
+        betInfo = getBetInfo(spot);
+        currentWager = wagers[spot];
+        currentNumbersCovered = betInfo.numbersCovered.length;
+        //console.log('currentWager for [' + currentWager + ']');
+
+        for (let i = 0; i < currentNumbersCovered; i++) {
+            currentNumber = betInfo.numbersCovered[i];
+            if (!equityPerSpot[currentNumber]) {
+                //console.log('equityPerSpot for [' + currentNumber + ']');
+                equityPerSpot[currentNumber] = 0.00;
+            }
+            equityPerSpot[currentNumber] += currentWager / currentNumbersCovered;
+        }
+    }
+
+    for (const spot in equityPerSpot) {
+        $('#equity-' + spot + ' div').text(equityPerSpot[spot].toLocaleString());
+    }
+
+    let totalBetAmount = 0;
+    for (const spot in wagers) {
+        totalBetAmount += wagers[spot];
+    }
+
+    $('.win div').removeClass(['amt-pos', 'amt-neg', 'amt-0']);
+
+    ROULETTE_NUMBERS.forEach(spot => {
+        if (!equityPerSpot[spot]) {
+            $('#win-' + spot + ' div').addClass('amt-neg');
+            $('#win-' + spot + ' div').text(-totalBetAmount);
+        }
+        else {
+            let winLossAmount = (equityPerSpot[spot] * 36) - totalBetAmount;
+            if (winLossAmount > 0) {
+                $('#win-' + spot + ' div').addClass('amt-pos');
+            }
+            else if (winLossAmount < 0) {
+                $('#win-' + spot + ' div').addClass('amt-neg');
+            }
+            else {
+                $('#win-' + spot + ' div').addClass('amt-0');
+            }
+            $('#win-' + spot + ' div').text(winLossAmount);
+        }
+    });
+}
+
+function clearBetInfoUI() {
+    $('#betInfoBetHeaderDiv').empty();
+    $('#betInfoBetPaysDiv').empty();
+    $('#betInfoBetCurrentBetDiv').empty();
+    $('#betInfoBetWinningPayDiv').empty();
+
+    ROULETTE_NUMBERS.forEach(spot => {
+        $('#highlight-' + spot).removeClass('highlight-hidden');
+        $('#highlight-' + spot).addClass('highlight-hidden');
+    });
+}
+
+function setCurrentChip(chipIndex) {
+    currentSelectedChipIndex = chipIndex;
+    for (let i = 0; i < 6; i++) {
+        $('#chip-cover-' + i).removeClass('chip-cover-hidden');
+    }
+
+    $('#chip-cover-' + chipIndex).addClass('chip-cover-hidden');
+}
+
+function clearBets() {
+    wagers = {};
+    $('.chip-bet').remove();
+
+    resetEquityPerSpot();
+    updateEquityPerSpot();
+    updateTotalAmounts();
+    updateConfiguration();
 }
 
 function onSpotClick(element) {
     if (wagers[element.id]) {
-        wagers[element.id] += currentSelectedChip;
+        wagers[element.id] += CHIP_AMOUNTS[currentSelectedChipIndex];
         $('#chip-' + element.id + ' div').text(wagers[element.id]);
     }
     else {
-
-        let newDiv = document.createElement('div');
-        let newImg = document.createElement('img');
-        let newTextDiv = document.createElement('div');
-
-        newDiv.id = 'chip-' + element.id;
-        newDiv.classList.add('chip');
-        newDiv.classList.add('chip-bet');
-
-        // console.log('w: ' + $('#' + element.id).width());
-        // console.log('h: ' + $('#' + element.id).height());
-        let divWidth = $('#' + element.id).width();
-        let divHeight = $('#' + element.id).height();
-        let divLeft = $('#' + element.id).position().left;
-        let divTop = $('#' + element.id).position().top;
-
-        newDiv.style.left = divLeft + (divWidth / 2) - (CHIP_WIDTH / 2);
-        newDiv.style.top = divTop + (divHeight / 2) - (CHIP_HEIGHT / 2);
-
-        newImg.id = 'chip-img-' + element.id;
-        newImg.width = CHIP_WIDTH;
-        newImg.height = CHIP_HEIGHT;
-
-        newTextDiv.classList.add('chip-text');
-        newTextDiv.innerHTML = currentSelectedChip;
-
-        $('#mainDiv').append(newDiv);
-        $('#' + newDiv.id ).append(newImg);
-        $('#' + newDiv.id ).append(newTextDiv);
-
-        wagers[element.id] = currentSelectedChip;
+        addBettingChip(element.id, currentSelectedChipIndex);
+        wagers[element.id] = CHIP_AMOUNTS[currentSelectedChipIndex];
     }
 
     setChipImage(element.id);
-
+    updateBetInfoUI(element.id);
+    updateTotalAmounts();
+    updateEquityPerSpot();
     updateConfiguration();
 
-    //let betInfo = getBetInfo(element.id)
-    //console.log(betInfo);
+    // Deselect anything that is highlighted
+    if (window.getSelection) {
+        window.getSelection().removeAllRanges();
+    }
+    else if (document.selection) {
+        document.selection.empty();
+    }
 }
 
 function setChipImage(spotId) {
@@ -117,9 +355,7 @@ function setChipImage(spotId) {
 }
 
 function updateConfiguration() {
-    //console.log('update config');
     $('#wager-config-textarea').val(JSON.stringify(wagers));
-
 }
 
 function getBetInfo(identifier) {
@@ -186,8 +422,7 @@ function getNumbersCovered(betType, identifierPart1, identifierPart2) {
     let identifierPart2Value = parseInt(identifierPart2);
     let returnValue = [identifierPart1];
 
-    // Don't add 1 to identifierPart1 because of 'x3-0-3'
-    // You have to subtract 1 from identifierPart2
+    // Don't add 1 to identifierPart1 because of 'x3-0-3' - You have to subtract 1 from identifierPart2
     if (betType === 'x3' ) {
         return [identifierPart1, (identifierPart2Value - 1).toString(), identifierPart2];
     }
@@ -219,7 +454,7 @@ function getNumbersCovered(betType, identifierPart1, identifierPart2) {
         if (identifierPart1 === 'col3') {
             return ROULETTE_NUMBERS_COL3;
         }
-        if (identifierPart1 === 'doz2') {
+        if (identifierPart1 === 'col2') {
             return ROULETTE_NUMBERS_COL2;
         }
         return ROULETTE_NUMBERS_COL1;
@@ -353,8 +588,52 @@ function createHotspots() {
     }
 }
 
+function createEquityPerSpotDivs() {
+    addEquitySpot('0', EQUITY_ABSOLUTE_LEFT - EQUITY_WIDTH, EQUITY_ABSOLUTE_TOP + EQUITY_HEIGHT);
+    for (let i = 0; i < 12; i++) {
+        for (let j = 0; j < 3; j++) {
+            let spot = i * 3 + j + 1;
+            let left = i * EQUITY_WIDTH + EQUITY_ABSOLUTE_LEFT;
+            let top = 2 * EQUITY_HEIGHT + EQUITY_ABSOLUTE_TOP - j * EQUITY_HEIGHT;
+
+            addEquitySpot(spot, left, top);
+        }
+    }
+}
+
+function createWinLossSpotDivs() {
+    addWinLossSpot('0', WINLOSS_ABSOLUTE_LEFT - EQUITY_WIDTH, WINLOSS_ABSOLUTE_TOP + EQUITY_HEIGHT);
+    for (let i = 0; i < 12; i++) {
+        for (let j = 0; j < 3; j++) {
+            let spot = i * 3 + j + 1;
+            let left = i * EQUITY_WIDTH + WINLOSS_ABSOLUTE_LEFT;
+            let top = 2 * EQUITY_HEIGHT + WINLOSS_ABSOLUTE_TOP - j * EQUITY_HEIGHT;
+
+            addWinLossSpot(spot, left, top);
+        }
+    }
+}
+
+function createSpotHighlightDivs() {
+    addSpotHighlight('0', HIGHLIGHT_ABSOLUTE_LEFT - HIGHLIGHT_WIDTH_0_0, HIGHLIGHT_ABSOLUTE_TOP);
+    for (let i = 0; i < 12; i++) {
+        for (let j = 0; j < 3; j++) {
+
+            let spot = i * 3 + j + 1;
+            let left = i * HIGHLIGHT_WIDTH + HIGHLIGHT_ABSOLUTE_LEFT;
+            let top = 2 * HIGHLIGHT_HEIGHT + HIGHLIGHT_ABSOLUTE_TOP - j * HIGHLIGHT_HEIGHT;
+
+            addSpotHighlight(spot, left, top);
+        }
+    }
+}
+
 $(document).ready(function() {
-    console.log('CREATING HOTSPOTS');
+    //console.log('CREATING HOTSPOTS');
     createHotspots();
-    console.log('READY FOR ACTION');
+    createEquityPerSpotDivs();
+    createWinLossSpotDivs();
+    createSpotHighlightDivs();
+    //console.log(isRed('1'));
+    //console.log('READY FOR ACTION');
 });
