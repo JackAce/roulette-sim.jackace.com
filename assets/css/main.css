@@ -8,6 +8,24 @@ body {
     position: absolute;
     z-index: 10;
 }
+#totalsTitleDiv {
+    top: 0px;
+    left: 0px;
+    width: 800px;
+    height: 57px;
+}
+#winLossTitleDiv {
+    top: 425px;
+    left: 0px;
+    width: 800px;
+    height: 30px;
+}
+#equityTitleDiv {
+    top: 575px;
+    left: 0px;
+    width: 800px;
+    height: 30px;
+}
 #configurationDiv {
     position: absolute;
     z-index: 11;
@@ -15,35 +33,41 @@ body {
     left: 50px;
     width: 500px;
     height: 100px;
+    display: none;
 }
 #betInfoDiv {
     position: absolute;
-    z-index: 10;
+    z-index: 30;
     left: 810px;
-    width: 300px;
-    height: 400px;
+    top: 60px;
+    width: 150px;
+    height: 200px;
     background-color: #8946bb;
 }
 
 #betInfoBetHeaderDiv {
     color: #fff;
-    font-size: 20px;
-    background-color: #7b41a6;
+    font-size: 16px;
+    background-color: #3b0069;
+    padding: 8px;
 }
 #betInfoBetPaysDiv {
     color: #fff;
-    font-size: 20px;
+    font-size: 12px;
     background-color: #7b41a6;
+    padding: 5px;
 }
 #betInfoBetCurrentBetDiv {
     color: #fff;
-    font-size: 20px;
+    font-size: 12px;
     background-color: #7b41a6;
+    padding: 5px;
 }
 #betInfoBetWinningPayDiv {
     color: #fff;
-    font-size: 20px;
+    font-size: 12px;
     background-color: #7b41a6;
+    padding: 5px;
 }
 
 #totalBetAmountHeaderDiv {
@@ -74,14 +98,35 @@ body {
 }
 
 #wager-config-textarea {
-    width: 500px;
+    position: absolute;
+    top: 0px;
+    left: 10px;
+    width: 700px;
     height: 100px;
 }
 #clearButton {
     position: absolute;
     z-index: 30;
     top: 15px;
-    left: 710px
+    left: 755px;
+}
+#undoButton {
+    position: absolute;
+    z-index: 30;
+    top: 15px;
+    left: 710px;
+}
+#doubleButton {
+    position: absolute;
+    z-index: 30;
+    top: 300px;
+    left: 730px;
+}
+#halveButton {
+    position: absolute;
+    z-index: 30;
+    top: 335px;
+    left: 730px;
 }
 
 .chip-position-0 {
@@ -118,24 +163,40 @@ body {
 } */
 .totalAmountHeader {
     position: absolute;
-    z-index: 12;
+    z-index: 22;
     width: 150px;
     height: 25px;
-    color: #ff0;
+    color: #fff;
     font-size: 20px;
     font-weight: bold;
     text-align: center;
 }
 .totalAmount {
     position: absolute;
-    z-index: 12;
+    z-index: 22;
     width: 150px;
     height: 25px;
     color: #fff;
     font-size: 20px;
     font-weight: bold;
     text-align: right;
-    background-color: #551585;
+    background-color: #26063e;
+}
+.title-bar {
+    position: absolute;
+    z-index: 20;
+
+    display: flex;
+    width: 50%;
+    margin: auto;
+    align-items:center;
+    justify-content:center;
+
+    background-color: #000;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
 }
 .chip-selectable {
     position: absolute;
@@ -188,8 +249,12 @@ body {
     background-color: rgba(255, 255, 255, 0.3);
 }
 .highlight-0-0-cap {
+    position: absolute;
+    z-index: 88;
     width: 0;
     height: 0;
+    top: 56px;
+    left: 31px;
     border-right: 21px solid rgba(255, 255, 255, 0.3);
     border-top: 115px solid transparent;
     border-bottom: 115px solid transparent;
@@ -205,10 +270,10 @@ body {
     background-color: #000;
 }
 .spot-green {
-    background-color: #0c0;
+    background-color: rgb(0, 188, 0);
 }
 .amt-pos {
-    color: #0c0;
+    color: rgb(0, 188, 0);
 }
 .amt-neg {
     color: #c00;
@@ -226,7 +291,6 @@ body {
 }
 .equity div {
     margin: 7px 5px 2px 2px;
-    font-weight: bold;
     text-align: right;
     font-size: 14px;
 }
@@ -242,6 +306,12 @@ body {
     font-weight: bold;
     text-align: right;
     font-size: 14px;
+
+    display: flex;
+    width: 50%;
+    margin: auto;
+    align-items:center;
+    justify-content:center;
 }
 
 .hotspot {
