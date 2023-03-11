@@ -1,10 +1,6 @@
 body {
     font-family: Arial;
     color: #fff;
-    background-color: #191;
-}
-
-body {
     background-color: #5c317c;
 }
 
@@ -20,11 +16,131 @@ body {
     width: 500px;
     height: 100px;
 }
+#betInfoDiv {
+    position: absolute;
+    z-index: 10;
+    left: 810px;
+    width: 300px;
+    height: 400px;
+    background-color: #8946bb;
+}
+
+#betInfoBetHeaderDiv {
+    color: #fff;
+    font-size: 20px;
+    background-color: #7b41a6;
+}
+#betInfoBetPaysDiv {
+    color: #fff;
+    font-size: 20px;
+    background-color: #7b41a6;
+}
+#betInfoBetCurrentBetDiv {
+    color: #fff;
+    font-size: 20px;
+    background-color: #7b41a6;
+}
+#betInfoBetWinningPayDiv {
+    color: #fff;
+    font-size: 20px;
+    background-color: #7b41a6;
+}
+
+#totalBetAmountHeaderDiv {
+    left: 105px;
+    top: 2px;
+}
+#evHeaderDiv {
+    left: 320px;
+    top: 2px;
+}
+#compsHeaderDiv {
+    left: 545px;
+    top: 2px;
+}
+
+#totalBetAmountDiv {
+    left: 105px;
+    top: 28px;
+}
+#evDiv {
+    left: 320px;
+    top: 28px;
+    color: #c00;
+}
+#compsDiv {
+    left: 545px;
+    top: 28px;
+}
+
 #wager-config-textarea {
     width: 500px;
     height: 100px;
 }
+#clearButton {
+    position: absolute;
+    z-index: 30;
+    top: 15px;
+    left: 710px
+}
 
+.chip-position-0 {
+    left: 5px;
+    top: 300px;
+}
+.chip-position-1 {
+    left: 40px;
+    top: 300px;
+}
+.chip-position-2 {
+    left: 5px;
+    top: 335px;
+}
+.chip-position-3 {
+    left: 40px;
+    top: 335px;
+}
+.chip-position-4 {
+    left: 5px;
+    top: 370px;
+}
+.chip-position-5 {
+    left: 40px;
+    top: 370px;
+}
+
+/* .vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+} */
+.totalAmountHeader {
+    position: absolute;
+    z-index: 12;
+    width: 150px;
+    height: 25px;
+    color: #ff0;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+.totalAmount {
+    position: absolute;
+    z-index: 12;
+    width: 150px;
+    height: 25px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: right;
+    background-color: #551585;
+}
+.chip-selectable {
+    position: absolute;
+    z-index: 20;
+}
 .chip {
     z-index: 20;
     width: 30px;
@@ -32,6 +148,12 @@ body {
 }
 .chip-bet {
     position: absolute;
+}
+.chip-cover {
+    position: absolute;
+}
+.chip-cover-hidden {
+    display: none;
 }
 .chip-inactive {
 
@@ -52,9 +174,79 @@ body {
     -webkit-text-stroke-width: 0.5px;
     -webkit-text-stroke-color: #fff;
 }
+
+.highlight {
+    position: absolute;
+    z-index: 99;
+    width: 52px;
+    height: 76px;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+.highlight-0-0 {
+    width: 40px;
+    height: 228px;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+.highlight-0-0-cap {
+    width: 0;
+    height: 0;
+    border-right: 21px solid rgba(255, 255, 255, 0.3);
+    border-top: 115px solid transparent;
+    border-bottom: 115px solid transparent;
+}
+.highlight-hidden {
+    display: none;
+}
+
+.spot-red {
+    background-color: #c00;
+}
+.spot-black {
+    background-color: #000;
+}
+.spot-green {
+    background-color: #0c0;
+}
+.amt-pos {
+    color: #0c0;
+}
+.amt-neg {
+    color: #c00;
+}
+.amt-0 {
+    color: #999;
+    font-style: italic;
+}
+
+.equity {
+    position: absolute;
+    width: 52px;
+    height: 30px;
+    border: 1px #fff solid;
+}
+.equity div {
+    margin: 7px 5px 2px 2px;
+    font-weight: bold;
+    text-align: right;
+    font-size: 14px;
+}
+.win {
+    background-image: url('/assets/img/bg-white-52x30.png');
+    position: absolute;
+    width: 52px;
+    height: 30px;
+    border: 1px #fff solid;
+}
+.win div {
+    margin: 7px 5px 2px 2px;
+    font-weight: bold;
+    text-align: right;
+    font-size: 14px;
+}
+
 .hotspot {
     position: absolute;
-    opacity: 0.001;
+    opacity: 0.0001;
 }
 .hotspot-inside {
     width: 26px;

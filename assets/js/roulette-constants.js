@@ -77,6 +77,27 @@ const ROULETTE_NUMBERS_COL2 = [
 const ROULETTE_NUMBERS_COL3 = [
     '3', '6', '9', '12', '15', '18', '21', '24', '27', '30', '33', '36'
 ];
+const CHIP_AMOUNTS = [1, 5, 25, 100, 500, 1000];
+
+// TODO: Make the rest of these
+const ID_X6_1TO6 = 'x6-1-6';
+const ID_X6_4TO9 = 'x6-4-9';
+const ID_X6_7TO12 = 'x6-7-12';
+const ID_X6_10TO15 = 'x6-10-15';
+const ID_X6_13TO18 = 'x6-13-18';
+const ID_X6_16TO21 = 'x6-16-21';
+const ID_X6_19TO24 = 'x6-19-24';
+const ID_X6_22TO27 = 'x6-22-27';
+const ID_X6_25TO30 = 'x6-25-30';
+const ID_X6_28TO33 = 'x6-28-33';
+const ID_X6_31TO36 = 'x6-31-36';
+const ID_X12_DOZ1 = 'x12-doz1';
+const ID_X12_DOZ2 = 'x12-doz2';
+const ID_X12_DOZ3 = 'x12-doz3';
+const ID_X12_COL1 = 'x12-col1';
+const ID_X12_COL2 = 'x12-col2';
+const ID_X12_COL3 = 'x12-col3';
+
 // DOM IDs for hotspots
 const HOTSPOT_IDENTIFIERS = [
     'x2-0-3',
@@ -227,6 +248,11 @@ const HOTSPOT_IDENTIFIERS = [
 
 const HOTSPOT_INSIDE_WIDTH = 26;
 const HOTSPOT_INSIDE_HEIGHT = 38;
+const EQUITY_WIDTH = 52;
+const EQUITY_HEIGHT = 30;
+const HIGHLIGHT_WIDTH = 52;
+const HIGHLIGHT_WIDTH_0_0 = 40;
+const HIGHLIGHT_HEIGHT = 76;
 
 const HOTSPOT_OUTSIDE_DOZEN_WIDTH = 208;
 const HOTSPOT_OUTSIDE_EVEN_MONEY_WIDTH = 104;
@@ -239,6 +265,12 @@ const HOTSPOT_INSIDE_ABSOLUTE_LEFT = 87;
 const HOTSPOT_INSIDE_ABSOLUTE_TOP = 87;
 const HOTSPOT_OUTSIDE_ABSOLUTE_LEFT = 100;
 const HOTSPOT_OUTSIDE_ABSOLUTE_TOP = 298;
+const EQUITY_ABSOLUTE_LEFT = 100;
+const EQUITY_ABSOLUTE_TOP = 585;
+const WINLOSS_ABSOLUTE_LEFT = 100;
+const WINLOSS_ABSOLUTE_TOP = 465;
+const HIGHLIGHT_ABSOLUTE_LEFT = 100;
+const HIGHLIGHT_ABSOLUTE_TOP = 69;
 
 const CHIP_WIDTH = 30;
 const CHIP_HEIGHT = 30;
