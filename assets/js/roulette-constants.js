@@ -112,7 +112,7 @@ const HOTSPOT_IDENTIFIERS = [
     'x2-0-2',
     'x3-0-2',       // 0-1-2
     'x2-0-1',
-    'x5-topline',   // Top Line Bet
+    'x4-0-3',       // 4 number bet 0-1-2-3 for Single Zero
     'x1-3',
     'x2-2-3',
     'x1-2',
@@ -253,6 +253,26 @@ const HOTSPOT_IDENTIFIERS = [
     'x3-34-36'
 ];
 
+const HOTSPOTS_0_ONLY = [
+    'x2-0-3',
+    'x3-0-3',       // 0-2-3
+    'x4-0-3'        // 0-1-2-3 "Top Line" Bet
+];
+const HOTSPOTS_0_00_OVERLAP = [
+    'x2-0-1',
+    'x2-0-2',
+    'x3-0-2'        // 0-1-2
+];
+const HOTSPOTS_00_ONLY = [
+    'x1-00',
+    'x2-0-00',
+    'x2-00-2',
+    'x2-00-3',
+    'x3-00-3',      // 00-2-3
+    'x3-basket',    // 0-00-2
+    'x5-topline'    // 0-00-1-2-3
+];
+
 const HOTSPOT_INSIDE_WIDTH = 26;
 const HOTSPOT_INSIDE_HEIGHT = 38;
 const EQUITY_WIDTH = 52;
@@ -289,3 +309,10 @@ const IMG_SRC_CHIP_25_BLANK = '/assets/img/chips/chip_25_blank-50x50.png';
 const IMG_SRC_CHIP_100_BLANK = '/assets/img/chips/chip_100_blank-50x50.png';
 const IMG_SRC_CHIP_500_BLANK = '/assets/img/chips/chip_500_blank-50x50.png';
 const IMG_SRC_CHIP_1000_BLANK = '/assets/img/chips/chip_1000_blank-50x50.png';
+
+const WHEEL_TYPE_0 = 0;
+const WHEEL_TYPE_00 = 1;
+const WHEEL_TYPE_0_LAYOUT_IMG_SRC = '/assets/img/roulette/roulette-layout-800x450.png';
+const WHEEL_TYPE_00_LAYOUT_IMG_SRC = '/assets/img/roulette/roulette-layout-00-800x450.png';
+const WHEEL_TYPE_0_BUTTON_IMG_SRC = '/assets/img/roulette/0_g-47x30.png';
+const WHEEL_TYPE_00_BUTTON_IMG_SRC = '/assets/img/roulette/00_g-47x30.png';
