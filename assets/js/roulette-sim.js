@@ -1,7 +1,19 @@
-let currentSelectedChipIndex = 1;   // Default to the $5 chip
+// require('roulette-constants.js')
+
+let currentSelectedChipIndex = CHIP_AMOUNT_INDEX_5; // Default to the $5 chip
+let currentWheelType = WHEEL_TYPE_0;                // Single Zero
 let wagers = {};
 let equityPerSpot = {};
 let chipBuffer = [];
+
+function toggleWheelType() {
+    if (currentWheelType === WHEEL_TYPE_0) {
+        setWheelType(WHEEL_TYPE_00);
+    }
+    else {
+        setWheelType(WHEEL_TYPE_0);
+    }
+}
 
 function addHotSpot(identifier, isGreen, left, top, className) {
     let newDiv = document.createElement('div');
@@ -16,6 +28,10 @@ function addHotSpot(identifier, isGreen, left, top, className) {
     newDiv.onmouseover = function() { onSpotHover(newDiv) };
     newDiv.onmouseout = function() { onSpotHoverEnd(newDiv) };
     newDiv.onclick = function() { onSpotClick(newDiv) };
+
+    if (identifier === 'x1-00') {
+        newDiv.classList.add('spot-hidden');
+    }
 
     $('#mainDiv').append(newDiv);
 }
@@ -70,6 +86,13 @@ function addEquitySpot(spot, left, top) {
     }
     else {
         newDiv.classList.add('spot-green');
+        if (spot === '00') {
+            newDiv.classList.add('equity-00');
+            newDiv.classList.add('equity-hidden');
+        }
+        else {
+            newDiv.classList.add('equity-0');
+        }
     }
 
     newDiv.style.left = left + 'px';
@@ -98,6 +121,13 @@ function addWinLossSpot(spot, left, top) {
     }
     else {
         newDiv.classList.add('spot-green');
+        if (spot === '00') {
+            newDiv.classList.add('win-00');
+            newDiv.classList.add('win-hidden');
+        }
+        else {
+            newDiv.classList.add('win-0');
+        }
     }
 
     newDiv.style.left = left + 'px';
@@ -105,8 +135,6 @@ function addWinLossSpot(spot, left, top) {
 
     $('#mainDiv').append(newDiv);
     $('#win-' + spot).append(innerDiv);
-
-    //innerDiv
 }
 
 function addSpotHighlight(spot, left, top) {
@@ -120,6 +148,9 @@ function addSpotHighlight(spot, left, top) {
     if (spot === '0') {
         newDiv.classList.add('highlight-0-0');
     }
+    else if (spot === '00') {
+        newDiv.classList.add('highlight-00-00');
+    }
 
     newDiv.style.left = left + 'px';
     newDiv.style.top = top + 'px';
@@ -128,6 +159,7 @@ function addSpotHighlight(spot, left, top) {
 }
 
 function isGreen(spot) {
+    spot = spot.toString();
     return ROULETTE_NUMBERS_GREEN.includes(spot);
 }
 
@@ -139,6 +171,10 @@ function isRed(spot) {
 function isBlack(spot) {
     spot = spot.toString();
     return ROULETTE_NUMBERS_BLACK.includes(spot);
+}
+
+function is00Only(identifier) {
+    return HOTSPOTS_00_ONLY.includes(identifier);
 }
 
 function onSpotHover(element) {
@@ -170,12 +206,20 @@ function updateBetInfoUI(elementId) {
     bet.numbersCovered.forEach(spot => {
         //console.log('highlighting ' + spot);
         $('#highlight-' + spot).removeClass('highlight-hidden');
-
-        if (spot === '0') {
-            $('#cap-0-0').removeClass('highlight-hidden');
+        if (currentWheelType === WHEEL_TYPE_0) {
+            if (spot === '0') {
+                $('#cap-0-0').removeClass('highlight-hidden');
+            }
+        }
+        else {
+            if (spot === '0') {
+                $('#cap-00-0').removeClass('highlight-hidden');
+            }
+            else if (spot === '00') {
+                $('#cap-00-00').removeClass('highlight-hidden');
+            }
         }
     });
-
 }
 
 function updateTotalAmounts() {
@@ -194,6 +238,70 @@ function updateTotalAmounts() {
         $('#evDiv').text('0');
         $('#compsDiv').text('0.00');
     }
+}
+
+function setWheelType(wheelType) {
+    if (wheelType === WHEEL_TYPE_0) {
+        currentWheelType = WHEEL_TYPE_0;
+        $('#wheelToggleImage').attr('src', WHEEL_TYPE_00_BUTTON_IMG_SRC);
+        $('#layoutImage').attr('src', WHEEL_TYPE_0_LAYOUT_IMG_SRC);
+
+        $('#layoutImage').attr('src', WHEEL_TYPE_0_LAYOUT_IMG_SRC);
+        $('#win-0').removeClass('win-00').addClass('win-0').css('top', WINLOSS_ABSOLUTE_TOP);
+        $('#equity-0').removeClass('equity-00').addClass('equity-0').css('top', EQUITY_ABSOLUTE_TOP);
+        $('#win-00').addClass('win-hidden');
+        $('#equity-00').addClass('equity-hidden');
+        $('#x1-00').addClass('spot-hidden');
+        $('#x1-0').css('top', 163);
+        $('#highlight-0').css('top', HOTSPOT_INSIDE_ABSOLUTE_TOP - 0.25 * HIGHLIGHT_HEIGHT).css('height', HIGHLIGHT_HEIGHT * 3);
+
+        HOTSPOTS_00_ONLY.forEach(identifier => {
+            $('#' + identifier).addClass('hotspot-hidden');
+        });
+        HOTSPOTS_0_ONLY.forEach(identifier => {
+            $('#' + identifier).removeClass('hotspot-hidden');
+        });
+        HOTSPOTS_0_00_OVERLAP.forEach(identifier => {
+            $('#' + identifier).removeClass('hotspot-topline');
+            $('#' + identifier).addClass('hotspot-inside');
+        });
+    
+        $('#x2-0-2').css('top', HOTSPOT_INSIDE_ABSOLUTE_TOP + 2 * HOTSPOT_INSIDE_HEIGHT);
+        $('#x3-0-3').css('top', HOTSPOT_INSIDE_ABSOLUTE_TOP + HOTSPOT_INSIDE_HEIGHT);
+        $('#x3-0-2').css('top', HOTSPOT_INSIDE_ABSOLUTE_TOP + 3 * HOTSPOT_INSIDE_HEIGHT);
+    }
+    else {
+        currentWheelType = WHEEL_TYPE_00;
+        $('#wheelToggleImage').attr('src', WHEEL_TYPE_0_BUTTON_IMG_SRC);
+        $('#layoutImage').attr('src', WHEEL_TYPE_00_LAYOUT_IMG_SRC);
+
+        $('#win-0').removeClass('win-0').addClass('win-00').css('top', WINLOSS_ABSOLUTE_TOP + 1.5 * EQUITY_HEIGHT);
+        $('#equity-0').removeClass('equity-0').addClass('equity-00').css('top', EQUITY_ABSOLUTE_TOP + 1.5 * EQUITY_HEIGHT);
+        $('#win-00').removeClass('win-hidden');
+        $('#equity-00').removeClass('equity-hidden');
+        $('#x1-00').removeClass('spot-hidden');
+        $('#x1-0').css('top', 163 + 1.5 * HOTSPOT_INSIDE_HEIGHT);
+        $('#highlight-0').css('height', HOTSPOT_INSIDE_HEIGHT * 1.5);
+        $('#highlight-0').css('top', HOTSPOT_INSIDE_ABSOLUTE_TOP + 1.25 * HIGHLIGHT_HEIGHT).css('height', 1.5 * HIGHLIGHT_HEIGHT);
+
+        HOTSPOTS_00_ONLY.forEach(identifier => {
+            $('#' + identifier).removeClass('hotspot-hidden');
+        });
+        HOTSPOTS_0_ONLY.forEach(identifier => {
+            $('#' + identifier).addClass('hotspot-hidden');
+        });
+        HOTSPOTS_0_00_OVERLAP.forEach(identifier => {
+            if (identifier !== 'x2-0-2' && identifier !== 'x2-0-1') {
+                $('#' + identifier).addClass('hotspot-topline');
+                $('#' + identifier).removeClass('hotspot-inside');
+            }
+        });
+
+        $('#x2-0-2').css('top', HOTSPOT_INSIDE_ABSOLUTE_TOP + 2.75 * HOTSPOT_INSIDE_HEIGHT);
+        $('#x3-0-3').css('top', HOTSPOT_INSIDE_ABSOLUTE_TOP + 1.125 * HOTSPOT_INSIDE_HEIGHT);
+        $('#x3-0-2').css('top', HOTSPOT_INSIDE_ABSOLUTE_TOP + 3.25 * HOTSPOT_INSIDE_HEIGHT);
+    }
+    clearBets();
 }
 
 function resetEquityPerSpot() {
@@ -276,8 +384,18 @@ function clearBetInfoUI() {
     $('#betInfoBetCurrentBetDiv').empty();
     $('#betInfoBetWinningPayDiv').empty();
 
-    $('#cap-0-0').removeClass('highlight-hidden');
-    $('#cap-0-0').addClass('highlight-hidden');
+    if (currentWheelType === WHEEL_TYPE_0) {
+        console.log('clearing hidden classes for 0');
+        $('#cap-0-0').removeClass('highlight-hidden');
+        $('#cap-0-0').addClass('highlight-hidden');
+    }
+    else {
+        console.log('clearing hidden classes for 00');
+        $('#cap-00-0').removeClass('highlight-hidden');
+        $('#cap-00-00').removeClass('highlight-hidden');
+        $('#cap-00-0').addClass('highlight-hidden');
+        $('#cap-00-00').addClass('highlight-hidden');
+    }
 
     ROULETTE_NUMBERS.forEach(spot => {
         $('#highlight-' + spot).removeClass('highlight-hidden');
@@ -479,6 +597,10 @@ function getNumbersCovered(betType, identifierPart1, identifierPart2) {
     let identifierPart2Value = parseInt(identifierPart2);
     let returnValue = [identifierPart1];
 
+    if (betType === 'x3' && identifierPart1 === 'basket') {
+        return ['0', '00', '2'];
+    }
+
     // Don't add 1 to identifierPart1 because of 'x3-0-3' - You have to subtract 1 from identifierPart2
     if (betType === 'x3' ) {
         return [identifierPart1, (identifierPart2Value - 1).toString(), identifierPart2];
@@ -540,11 +662,20 @@ function getNumbersCovered(betType, identifierPart1, identifierPart2) {
 }
 
 function getCanonicalName(betType, identifierPart1, identifierPart2) {
+    if (betType === 'x3' && identifierPart1 === 'basket') {
+        return '0-00-2 3-Number Bet';        
+    }
     if (betType === 'x3' && identifierPart1 === '0' && identifierPart2 === '2') {
-        return '0-1-2 3 Number Bet';        
+        return '0-1-2 3-Number Bet';        
     }
     if (betType === 'x3' && identifierPart1 === '0' && identifierPart2 === '3') {
-        return '0-2-3 3 Number Bet';        
+        return '0-2-3 3-Number Bet';        
+    }
+    if (betType === 'x3' && identifierPart1 === '00' && identifierPart2 === '3') {
+        return '00-2-3 3-Number Bet';        
+    }
+    if (betType === 'x4' && identifierPart1 === '0' && identifierPart2 === '3') {
+        return '0-1-2-3 4-Number Bet';        
     }
 
     switch (betType) {
@@ -607,7 +738,17 @@ function createHotspots() {
     let isGreen = false;
     let index = 0;
 
-    addHotSpot('x1-0', true, 61, 163, 'hotspot-inside');
+    addHotSpot('x1-0', false, HOTSPOT_INSIDE_ABSOLUTE_LEFT - HOTSPOT_INSIDE_WIDTH, 163, 'hotspot-inside');
+    addHotSpot('x2-0-00', true, HOTSPOT_INSIDE_ABSOLUTE_LEFT - HOTSPOT_INSIDE_WIDTH, HOTSPOT_INSIDE_ABSOLUTE_TOP + 2 * HOTSPOT_INSIDE_HEIGHT, 'hotspot-inside');
+    addHotSpot('x1-00', false, HOTSPOT_INSIDE_ABSOLUTE_LEFT - HOTSPOT_INSIDE_WIDTH, HOTSPOT_INSIDE_ABSOLUTE_TOP + 0.5 * HOTSPOT_INSIDE_HEIGHT, 'hotspot-inside');
+
+    // Hotspots ONLY visible with 00
+    'x3-0-3'
+    addHotSpot('x2-00-3', false, HOTSPOT_INSIDE_ABSOLUTE_LEFT, HOTSPOT_INSIDE_ABSOLUTE_TOP + 0.25 * HOTSPOT_INSIDE_HEIGHT, 'hotspot-inside');
+    addHotSpot('x3-00-3', true, HOTSPOT_INSIDE_ABSOLUTE_LEFT, HOTSPOT_INSIDE_ABSOLUTE_TOP + 1.25 * HOTSPOT_INSIDE_HEIGHT, 'hotspot-topline');
+    addHotSpot('x2-00-2', false, HOTSPOT_INSIDE_ABSOLUTE_LEFT, HOTSPOT_INSIDE_ABSOLUTE_TOP + 1.75 * HOTSPOT_INSIDE_HEIGHT, 'hotspot-topline');
+    addHotSpot('x3-basket', true, HOTSPOT_INSIDE_ABSOLUTE_LEFT, HOTSPOT_INSIDE_ABSOLUTE_TOP + 2.25 * HOTSPOT_INSIDE_HEIGHT, 'hotspot-topline');
+    addHotSpot('x5-topline', true, HOTSPOT_INSIDE_ABSOLUTE_LEFT, HOTSPOT_INSIDE_ABSOLUTE_TOP + 5 * HOTSPOT_INSIDE_HEIGHT, 'hotspot-inside');
 
     addHotSpot('x12-doz1', true, HOTSPOT_OUTSIDE_ABSOLUTE_LEFT, HOTSPOT_OUTSIDE_ABSOLUTE_TOP, 'hotspot-outside-dozen');
     addHotSpot('x12-doz2', false, HOTSPOT_OUTSIDE_ABSOLUTE_LEFT + HOTSPOT_OUTSIDE_DOZEN_WIDTH, HOTSPOT_OUTSIDE_ABSOLUTE_TOP, 'hotspot-outside-dozen');
@@ -643,10 +784,18 @@ function createHotspots() {
             index++;
         }
     }
+
+    HOTSPOTS_00_ONLY.forEach(identifier => {
+        $('#' + identifier).addClass('hotspot-hidden');
+    });
+    HOTSPOTS_0_ONLY.forEach(identifier => {
+        $('#' + identifier).removeClass('hotspot-hidden');
+    });
 }
 
 function createEquityPerSpotDivs() {
-    addEquitySpot('0', EQUITY_ABSOLUTE_LEFT - EQUITY_WIDTH, EQUITY_ABSOLUTE_TOP + EQUITY_HEIGHT);
+    addEquitySpot('0', EQUITY_ABSOLUTE_LEFT - EQUITY_WIDTH, EQUITY_ABSOLUTE_TOP);
+    addEquitySpot('00', EQUITY_ABSOLUTE_LEFT - EQUITY_WIDTH, EQUITY_ABSOLUTE_TOP);
     for (let i = 0; i < 12; i++) {
         for (let j = 0; j < 3; j++) {
             let spot = i * 3 + j + 1;
@@ -659,7 +808,8 @@ function createEquityPerSpotDivs() {
 }
 
 function createWinLossSpotDivs() {
-    addWinLossSpot('0', WINLOSS_ABSOLUTE_LEFT - EQUITY_WIDTH, WINLOSS_ABSOLUTE_TOP + EQUITY_HEIGHT);
+    addWinLossSpot('0', WINLOSS_ABSOLUTE_LEFT - EQUITY_WIDTH, WINLOSS_ABSOLUTE_TOP);
+    addWinLossSpot('00', WINLOSS_ABSOLUTE_LEFT - EQUITY_WIDTH, WINLOSS_ABSOLUTE_TOP);
     for (let i = 0; i < 12; i++) {
         for (let j = 0; j < 3; j++) {
             let spot = i * 3 + j + 1;
@@ -673,6 +823,7 @@ function createWinLossSpotDivs() {
 
 function createSpotHighlightDivs() {
     addSpotHighlight('0', HIGHLIGHT_ABSOLUTE_LEFT - HIGHLIGHT_WIDTH_0_0, HIGHLIGHT_ABSOLUTE_TOP);
+    addSpotHighlight('00', HIGHLIGHT_ABSOLUTE_LEFT - HIGHLIGHT_WIDTH_0_0, HIGHLIGHT_ABSOLUTE_TOP);
     for (let i = 0; i < 12; i++) {
         for (let j = 0; j < 3; j++) {
 

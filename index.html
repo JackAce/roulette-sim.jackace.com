@@ -27,7 +27,7 @@ title: Roulette Simulator - JackAce.com
       <div id="mainDiv">
 
         <div id="rouletteLayoutDiv">
-          <img src="/assets/img/roulette/roulette-layout-800x450.png" width="800" height="450" />
+          <img src="/assets/img/roulette/roulette-layout-800x450.png" id="layoutImage" width="800" height="450" />
 
           <div id="totalBetAmountHeaderDiv" class="totalAmountHeader">Total Amt Bet</div>
           <div id="evHeaderDiv" class="totalAmountHeader">EV/Spin</div>
@@ -40,6 +40,8 @@ title: Roulette Simulator - JackAce.com
           <div id="undoButton" class="button"><img src="/assets/img/buttons/btn-backspace-40x40.png" width="30" height="30" onclick="undoLastBet();" /></div>
           <div id="doubleButton" class="button"><img src="/assets/img/buttons/btn-double-40x40.png" width="30" height="30" onclick="martingaleBet();" /></div>
           <div id="halveButton" class="button"><img src="/assets/img/buttons/btn-halve-40x40.png" width="30" height="30" onclick="halveBet();" /></div>
+
+          <img src="/assets/img/roulette/00_g-47x30.png" width="47" height="30" id="wheelToggleImage" onclick="toggleWheelType();" />
 
           <img src="/assets/img/chips/chip_1-50x50.png" width="50" height="50" id="chip-selectable-1" class="chip chip-selectable chip-position-0 chip-1 chip-inactive" />
           <img src="/assets/img/chips/chip_5-50x50.png" width="50" height="50" id="chip-selectable-5" class="chip chip-selectable chip-position-1 chip-5 chip-inactive" />
@@ -59,6 +61,8 @@ title: Roulette Simulator - JackAce.com
           <div id="winLossTitleDiv" class="title-bar" >Win/Loss per Spot</div>
           <div id="equityTitleDiv" class="title-bar" >Equity per Spot</div>
           <div id="cap-0-0" class="highlight-0-0-cap highlight-hidden" ></div>
+          <div id="cap-00-0" class="highlight-00-0-cap highlight-hidden" ></div>
+          <div id="cap-00-00" class="highlight-00-00-cap highlight-hidden" ></div>
 
           <div id="jackaceLabelDiv" class="disclaimer" >jackace.com</div>
         </div>
