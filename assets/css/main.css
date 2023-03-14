@@ -33,7 +33,7 @@ body {
     left: 50px;
     width: 500px;
     height: 100px;
-    xdisplay: none;
+    display: none;
 }
 #betInfoDiv {
     position: absolute;
