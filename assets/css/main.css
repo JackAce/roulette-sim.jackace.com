@@ -473,3 +473,9 @@ a:hover {
 .hotspot-g {
     background-color: #0f0;
 }
+.wheel {
+    position: absolute;
+    z-index: 30;
+    top: 605px;
+    left: 625px;
+}
